@@ -16,6 +16,7 @@ def fetch_student_data(monthly_subscription_file: str, semester_subscription_fil
         print("No additional financial aid data found.")
         additional_financial_aid_data = set()
 
+    # Add a column to indicate the subscription type
     monthly_df['subscription_type'] = 'month'
     semester_df['subscription_type'] = 'semester'
 
@@ -34,11 +35,6 @@ def process_student_data_df(input_file: str):
     """
     Modify the dataframe to later merge them together.
     """
-
-    # Return an empty dataframe if the input file is empty
-    if input_file == 'empty':
-        return pd.DataFrame()
-
     df = pd.read_csv(input_file, sep='\t')
     columns_to_keep = ['Email Address', 'Meals you want to take', 'Is your financial help approved?']
     df = df[columns_to_keep]

@@ -67,14 +67,6 @@ def get_input_files() -> dict:
     latest_data = get_latest_data()
     new_file_paths = {}
     for key, file_path in latest_data.items():
-
-        if file_path.endswith('empty'):
-            parent_dir = file_path.split('/')[-3]
-            directory = file_path.split('/')[-2]
-            print(f"No file found in {parent_dir}/{directory} directory.")
-            new_file_paths[key] = 'empty'
-            continue
-
         dir_name = os.path.dirname(file_path)
         _, ext = os.path.splitext(file_path)
         new_file_path = os.path.join(dir_name, f"{current_date}{ext}")
@@ -102,7 +94,4 @@ def get_latest_file(dir_path: str) -> str:
     """
     files = os.listdir(dir_path)
     files.sort(key=lambda x: os.path.getmtime(os.path.join(dir_path, x)))
-    latest_file = files[-1]
-    if latest_file.endswith('.md'):
-        return f"{dir_path}/empty"
-    return os.path.join(dir_path, latest_file)
+    return os.path.join(dir_path, files[-1])
