@@ -4,6 +4,9 @@ output/**/*.tsv
 output/**/*.csv
 output/**/*.json
 output/**/*.xlsx
+
+temp/
+
 # Created by https://www.toptal.com/developers/gitignore/api/python
 # Edit at https://www.toptal.com/developers/gitignore?templates=python
 

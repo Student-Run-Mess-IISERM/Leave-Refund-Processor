@@ -19,6 +19,7 @@ def main():
     merge_data(output_files["leaves"], output_files["student"], output_files["refund"])
     amount_included_data = calculate_refunds(output_files["refund"], output_files["amount"])
     create_bank_file(amount_included_data, output_files["bank"])
+    print("Done processing.")
 
 
 if __name__ == '__main__':

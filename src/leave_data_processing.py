@@ -1,7 +1,6 @@
 import pandas as pd
 from .directory import get_config_data
 
-
 def fetch_leave_data(filepath, output_path):
     mappings = {
         'Name': 'name',
@@ -15,13 +14,22 @@ def fetch_leave_data(filepath, output_path):
     data['Start Date'] = pd.to_datetime(data['Start Date'], format='%m/%d/%Y')
     data['End Date'] = pd.to_datetime(data['End Date'], format='%m/%d/%Y')
     data['dates'] = data.apply(lambda row: get_dates(row['Start Date'], row['End Date'], month), axis=1)
+    data = data[data['dates'].apply(len) > 1]
     data = data.drop_duplicates(subset=['identifier', 'Start Date', 'End Date'])
     data = data.rename(columns=mappings)
-    data = data.drop(columns=['Timestamp', 'Registration Number', 'Remarks', 'No. of Days',
-                              'Email Address', 'Start Date', 'End Date'])
+    data['account_number'] = data['account_number'].astype(str).str.lstrip('@')
+    data['ifsc'] = data['ifsc'].astype(str).str.lstrip('@')
+    data = data.drop(columns=[
+        'Timestamp', 
+        'Registration Number', 
+        'Remarks', 
+        'No. of Days',
+        'Email Address', 
+        'Start Date', 
+        'End Date'
+    ])
     data = aggregate_data(data)
     data.to_json(output_path, orient='records', indent=4)
-
 
 def aggregate_data(data):
     aggregator = {
@@ -33,11 +41,10 @@ def aggregate_data(data):
     }
     aggregated_data = data.groupby('identifier').agg(aggregator)
     aggregated_data['days'] = aggregated_data['dates'].apply(len)
-    aggregated_data = aggregated_data[aggregated_data['days'] > 0]
+    # aggregated_data = aggregated_data[aggregated_data['days'] < 9]
     aggregated_data['dates'] = aggregated_data['dates'].apply(sorted)
     aggregated_data.reset_index(inplace=True)
     return aggregated_data
-
 
 def get_dates(start_date, end_date, chosen_month):
     date_range = pd.date_range(start_date, end_date).to_series()

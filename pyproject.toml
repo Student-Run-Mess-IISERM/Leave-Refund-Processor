@@ -1,0 +1,10 @@
+[project]
+name = "SRM Refund Processing"
+version = "1.0.0"
+description = "SRM Refund Processing"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "pandas>=2.2.3",
+    "xlsxwriter>=3.2.0",
+]

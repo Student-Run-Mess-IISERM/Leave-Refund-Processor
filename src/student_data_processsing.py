@@ -35,17 +35,24 @@ def process_student_data_df(input_file: str):
     Modify the dataframe to later merge them together.
     """
 
-    # Return an empty dataframe if the input file is empty
+import pandas as pd
+
+def process_student_data_df(input_file: str):
+    # Return an empty dataframe if file is empty
     if input_file == 'empty':
         return pd.DataFrame()
 
-    df = pd.read_csv(input_file, sep='\t')
-    columns_to_keep = ['Email Address', 'Meals you want to take', 'Is your financial help approved?']
-    df = df[columns_to_keep]
-    df['identifier'] = df['Email Address'].apply(lambda x: x.split('@')[0])
-    df['no_of_meals'] = df['Meals you want to take'].apply(lambda x: len(x.split(',')))
-    df.rename(columns={'Is your financial help approved?': 'financial_help'}, inplace=True)
+    df = pd.read_csv(input_file, sep='\t')    
 
-    df = df[['identifier', 'financial_help', 'no_of_meals']]
+    email_col = [col for col in df.columns if 'email' in col.lower()]
+    meals_col = [col for col in df.columns if 'meal' in col.lower()]
+    financial_col = [col for col in df.columns if 'financial' in col.lower()]
 
-    return df
+    if not (len(email_col) == 1 and len(meals_col) == 1 and len(financial_col) == 1):
+        raise ValueError("Could not uniquely identify columns for email, meals, and financial help.")
+
+    df['identifier'] = df[email_col[0]].apply(lambda x: x.split('@')[0])
+    df['no_of_meals'] = df[meals_col[0]].apply(lambda x: len(x.split(',')))
+    df['financial_help'] = df[financial_col[0]]
+
+    return df[['identifier', 'financial_help', 'no_of_meals']]
